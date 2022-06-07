@@ -77,7 +77,7 @@ class _settingsState extends State<settings> {
                           content: Container(
                             padding: EdgeInsets.all(0),
                             height: 75,
-                            child: FlatButton(
+                            child: TextButton(
                               onPressed: () {},
                               child: Column(children: [
                                 Divider(),
@@ -134,7 +134,7 @@ class ProfileMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 60,
-      child: FlatButton(
+      child: TextButton(
         onPressed: press,
         child: Row(
           children: [
