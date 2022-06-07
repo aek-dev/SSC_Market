@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:ssc_market/Api_Handler.dart';
 import 'package:ssc_market/NoUser/info_login.dart';
 
 class apparel extends StatefulWidget {
@@ -11,6 +14,13 @@ class apparel extends StatefulWidget {
 
 class _apparelState extends State<apparel> {
   final String idroom = "";
+  ApiHandler apiHandler = ApiHandler();
+  List output = [];
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,73 +46,24 @@ class _apparelState extends State<apparel> {
                       crossAxisSpacing: 20,
                       mainAxisSpacing: 20,
                       children: <Widget>[
-                        cardk1(
-                          tital: "APL01",
-                          status: "ບໍ່ວ່າງ",
-                          ontap: () {
-                            Navigator.of(context).push(PageTransition(
-                                type: PageTransitionType.rightToLeft,
-                                child: infologin()));
-                            setState(() {
-                              String idroom = "APL01";
-                            });
-                          },
-                        ),
-                        cardk1(
-                          tital: "APL02",
-                          ontap: () {},
-                          status: "ວ່າງ",
-                        ),
-                        cardk1(
-                          tital: "APL03",
-                          ontap: () {},
-                          status: "ບໍ່ວ່າງ",
-                        ),
-                        cardk1(
-                          tital: "APL04",
-                          ontap: () {},
-                          status: "ບໍ່ວ່າງ",
-                        ),
-                        cardk1(
-                          tital: "APL05",
-                          ontap: () {},
-                          status: "ບໍ່ວ່າງ",
-                        ),
-                        cardk1(
-                          tital: "APL06",
-                          ontap: () {},
-                          status: "ບໍ່ວ່າງ",
-                        ),
-                        cardk1(
-                          tital: "APL07",
-                          ontap: () {},
-                          status: "ບໍ່ວ່າງ",
-                        ),
-                        cardk1(
-                          tital: "APL08",
-                          ontap: () {},
-                          status: "ບໍ່ວ່າງ",
-                        ),
-                        cardk1(
-                          tital: "APL09",
-                          ontap: () {},
-                          status: "ບໍ່ວ່າງ",
-                        ),
-                        cardk1(
-                          tital: "APL10",
-                          ontap: () {},
-                          status: "ບໍ່ວ່າງ",
-                        ),
-                        cardk1(
-                          tital: "APL11",
-                          ontap: () {},
-                          status: "ບໍ່ວ່າງ",
-                        ),
-                        cardk1(
-                          tital: "APL12",
-                          ontap: () {},
-                          status: "ບໍ່ວ່າງ",
-                        ),
+                        for (var i in output)
+                          InkWell(
+                            onTap: () {},
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Color(0xffFFE478),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  i["id_room"] + " " + i["status"],
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.grey, fontSize: 20),
+                                ),
+                              ),
+                            ),
+                          )
                       ],
                     ),
                   ),
@@ -114,40 +75,12 @@ class _apparelState extends State<apparel> {
       ),
     );
   }
-}
 
-class cardk1 extends StatelessWidget {
-  final String tital;
-  final ontap;
-  final String status;
-  const cardk1({
-    Key? key,
-    required this.tital,
-    required this.ontap,
-    required this.status,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Material(
-        child: InkWell(
-          onTap: ontap,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Color(0xffFFE478),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Center(
-              child: Text(
-                tital + " " + status,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey, fontSize: 20),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+  void loadData() async {
+    var response = await apiHandler.get("/user/list/rentalroom");
+    setState(() {
+      output = json.decode(response.body);
+    });
   }
+  
 }
