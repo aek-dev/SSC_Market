@@ -17,7 +17,7 @@ class _apparelState extends State<apparel> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("ໂຂນຂາຍເຄື່ອງນຸ່ງຮົ່ມ"),
+        title: Text("ໂໍຊນຂາຍເຄື່ອງນຸ່ງຫົ່ມ"),
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           icon: Icon(Icons.arrow_back_ios),

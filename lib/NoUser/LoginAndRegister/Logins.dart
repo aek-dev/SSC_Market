@@ -15,8 +15,9 @@ class logins extends StatefulWidget {
 
 class _loginsState extends State<logins> {
   final formkey = GlobalKey<FormState>();
-  var ac_data1 = "";
-  var ac_data2 = "";
+  TextEditingController _phoneController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  
   bool pit_pass = false;
   @override
   Widget build(BuildContext context) {
@@ -68,10 +69,6 @@ class _loginsState extends State<logins> {
                   onSaved: (User_email) {},
                 ),
                 SizedBox(
-                  child: Text(
-                    ac_data1,
-                    style: TextStyle(color: Colors.red),
-                  ),
                   height: 25,
                 ),
                 TextFormField(
@@ -94,10 +91,6 @@ class _loginsState extends State<logins> {
                   onSaved: (Upassw) {},
                 ),
                 SizedBox(
-                  child: Text(
-                    ac_data2,
-                    style: TextStyle(color: Colors.red),
-                  ),
                   height: 25,
                 ),
                 GestureDetector(
