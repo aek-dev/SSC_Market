@@ -18,12 +18,8 @@ class logins extends StatefulWidget {
 
 class _loginsState extends State<logins> {
   final formkey = GlobalKey<FormState>();
-<<<<<<< HEAD
-  TextEditingController _phoneController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+
   
-=======
->>>>>>> ebb21eff0250b4d7043527cd9dcc56f6b09053d8
   bool pit_pass = false;
   TextEditingController phoneController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
