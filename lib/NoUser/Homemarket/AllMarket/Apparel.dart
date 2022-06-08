@@ -46,7 +46,9 @@ class _apparelState extends State<apparel> {
                       children: <Widget>[
                         for (var i in output)
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              print(i["id_room"]);
+                            },
                             child: Container(
                               decoration: BoxDecoration(
                                 color: Color(0xffFFE478),
