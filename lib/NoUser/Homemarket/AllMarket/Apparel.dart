@@ -76,10 +76,12 @@ class _apparelState extends State<apparel> {
     );
   }
 
+
   void LoadAlldata() async {
     var response = await apiHandler.get("/user/list/rentalroom");
     setState(() {
       output = response;
     });
+
   }
 }
