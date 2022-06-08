@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -5,6 +7,7 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:ssc_market/Api_Handler.dart';
 import 'package:ssc_market/NoUser/About.dart';
+import 'package:art_sweetalert/art_sweetalert.dart';
 
 class registers extends StatefulWidget {
   const registers({Key? key}) : super(key: key);
@@ -47,6 +50,9 @@ class _registersState extends State<registers> {
   TextEditingController genderController = TextEditingController();
   TextEditingController districtController = TextEditingController();
   TextEditingController provinceController = TextEditingController();
+  String errorText = "";
+  bool validate = false;
+  bool circular = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -155,7 +161,6 @@ class _registersState extends State<registers> {
                         onChanged: (String? newValue3) {
                           setState(() {
                             dropdowngender = newValue3!;
-                            
                           });
                         },
                       ),
@@ -286,6 +291,7 @@ class _registersState extends State<registers> {
                   }),
                   keyboardType: TextInputType.phone,
                   decoration: InputDecoration(
+                      errorText: validate ? null : errorText,
                       prefixIcon: Padding(
                         padding: const EdgeInsets.only(top: 15, left: 15),
                         child: Text(
@@ -323,26 +329,47 @@ class _registersState extends State<registers> {
                   width: 250,
                   height: 50,
                   child: ElevatedButton.icon(
-                    onPressed: () {
-                      Map<String,String>data={
-                        "first_name":nameController.text,
-                        "last_name":lastnameController.text,
-                        "village":villageController.text,
-                        "district":dropdownvalue2,
-                        "province":dropdownvalue,
-                        "phone":phoneController.text,
-                        "password":passwordController.text,
-                        "gender":dropdowngender
-                        
-                      };
-                      print(data);
-                      apiHandler.post("/user/register",data);
+                    onPressed: () async {
+                      setState(() {
+                        circular = true;
+                      });
+                      await CheckPhoneNumber();
+                      if (formkey.currentState!.validate() && validate) {
+                        Map<String, String> data = {
+                          "first_name": nameController.text,
+                          "last_name": lastnameController.text,
+                          "village": villageController.text,
+                          "district": dropdownvalue2,
+                          "province": dropdownvalue,
+                          "phone": phoneController.text,
+                          "password": passwordController.text,
+                          "gender": dropdowngender
+                        };
+                        print(data);
+                        apiHandler.post("/user/register", data);
+                        ArtSweetAlert.show(
+                            context: context,
+                            artDialogArgs: ArtDialogArgs(
+                                type: ArtSweetAlertType.success,
+                                title: "ສຳເລັດ",
+                                text: "ທ່ານໄດ້ລົງທະບຽນສຳເລັດ"));
+
+                        setState(() {
+                          circular = false;
+                        });
+                      } else {
+                        setState(() {
+                          circular = false;
+                        });
+                      }
                     },
                     label: Icon(Icons.insert_chart),
-                    icon: Text(
-                      "ລົງທະບຽນ",
-                      style: TextStyle(fontSize: 20),
-                    ),
+                    icon: circular
+                        ? CircularProgressIndicator()
+                        : Text(
+                            "ລົງທະບຽນ",
+                            style: TextStyle(fontSize: 20),
+                          ),
                     style: ElevatedButton.styleFrom(
                       shape: new RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(20.0),
@@ -356,5 +383,29 @@ class _registersState extends State<registers> {
         ),
       ),
     );
+  }
+
+  CheckPhoneNumber() async {
+    if (phoneController.text.length == 0) {
+      setState(() {
+        circular = false;
+        validate = false;
+        errorText = "ກະລຸນາປ້ອນເບີໂທລະສັບຂອງທ່ານ";
+      });
+    } else {
+      var response = await apiHandler
+          .get("/user/checkphonenumber/${phoneController.text}");
+
+      if (response['status']) {
+        setState(() {
+          validate = false;
+          errorText = "ບໍ່ສາມາດລົງທະບຽນໄດ້ເນື່ອງຈາກມີບັນຊີຜູ້ໃຊ້ນີ້ຢູ່ແລ້ວ";
+        });
+      } else {
+        setState(() {
+          validate = true;
+        });
+      }
+    }
   }
 }

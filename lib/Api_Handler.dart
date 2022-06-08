@@ -8,16 +8,18 @@ class ApiHandler {
 
   var log = Logger();
 
-  Future<http.Response> get(String url) async {
+  Future get(String url) async {
     url = formater(url);
-    var response = await http.get(Uri.parse(url),headers: {
+    var response = await http.get(Uri.parse(url), headers: {
       "Content-Type": "application/json",
       "Accept": "application/json"
     });
-
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      log.i(response.body);
+      return json.decode(response.body);
+    }
     log.i(response.body);
     log.i(response.statusCode);
-    return response;
   }
 
   Future<http.Response> post(String url, Map<String, String> body) async {
