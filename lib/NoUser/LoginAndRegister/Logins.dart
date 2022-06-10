@@ -20,13 +20,13 @@ class logins extends StatefulWidget {
 class _loginsState extends State<logins> {
   final formkey = GlobalKey<FormState>();
 
-  
-  bool pit_pass = false;
+  bool visit_pass = true;
   TextEditingController phoneController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   ApiHandler apiHandler = ApiHandler();
   String errorText = "";
   bool validate = false;
+  bool circular = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,18 +85,22 @@ class _loginsState extends State<logins> {
                 ),
                 TextFormField(
                   controller: passwordController,
-                  onTap: () {
-                    setState(() {});
-                  },
                   keyboardType: TextInputType.visiblePassword,
+                  obscureText: visit_pass,
                   decoration: InputDecoration(
+                      suffixIcon: IconButton(
+                          icon: Icon(visit_pass
+                              ? Icons.visibility_off
+                              : Icons.visibility),
+                          onPressed: () {
+                            setState(() {
+                              visit_pass = !visit_pass;
+                            });
+                          }),
                       errorText: validate ? null : errorText,
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15)),
                       icon: Icon(Icons.lock),
-                      suffixIcon: pit_pass
-                          ? Icon(Icons.visibility)
-                          : Icon(Icons.visibility_off),
                       hintText: "ລະຫັດຜ່ານ"),
                 ),
                 SizedBox(
@@ -118,50 +122,57 @@ class _loginsState extends State<logins> {
                   height: 35,
                 ),
                 Container(
-                  child: SizedBox(
-                    height: 60,
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                        style: ButtonStyle(
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                          ),
-                        ),
-                        icon: Icon(Icons.login),
-                        label: Text(
-                          "ເຂົ້າສູ່ລະບົບ",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        onPressed: () async {
-                          Map<String, String> data = {
-                            "phone": phoneController.text,
-                            "password": passwordController.text
-                          };
-                          var response =
-                              await apiHandler.post("/user/login", data);
+                  child: circular
+                      ? CircularProgressIndicator()
+                      : SizedBox(
+                          height: 60,
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                              style: ButtonStyle(
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                ),
+                              ),
+                              icon: Icon(Icons.login),
+                              label: Text(
+                                "ເຂົ້າສູ່ລະບົບ",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              onPressed: () async {
+                                setState(() {
+                                  circular = true;
+                                });
+                                Map<String, String> data = {
+                                  "phone": phoneController.text,
+                                  "password": passwordController.text
+                                };
+                                var response =
+                                    await apiHandler.post("/user/login", data);
 
-                          if (response.statusCode == 200 ||
-                              response.statusCode == 201) {
-                            Map<String, dynamic> output =
-                                json.decode(response.body);
-                            print(output['token']);
-                            setState(() {
-                              validate = true;
-                            });
-                          } else {
-                            Map<String, dynamic> output =
-                                json.decode(response.body);
-                            setState(() {
-                              validate = false;
-                              errorText = output['message'];
-                            });
-                          }
-                        }),
-                  ),
+                                if (response.statusCode == 200 ||
+                                    response.statusCode == 201) {
+                                  Map<String, dynamic> output =
+                                      json.decode(response.body);
+                                  print(output['token']);
+                                  setState(() {
+                                    validate = true;
+                                    circular = false;
+                                  });
+                                } else {
+                                  Map<String, dynamic> output =
+                                      json.decode(response.body);
+                                  setState(() {
+                                    validate = false;
+                                    errorText = output['message'];
+                                    circular = false;
+                                  });
+                                }
+                              }),
+                        ),
                 ),
                 const SizedBox(
                   height: 30,

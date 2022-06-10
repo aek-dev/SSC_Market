@@ -15,10 +15,11 @@ class apparel extends StatefulWidget {
 class _apparelState extends State<apparel> {
   ApiHandler apiHandler = ApiHandler();
   List output = [];
-  void initState(){
+  void initState() {
     super.initState();
     LoadAlldata();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,19 +51,32 @@ class _apparelState extends State<apparel> {
                               print(i["id_room"]);
                             },
                             child: Container(
-                              decoration: BoxDecoration(
-                                color: Color(0xffFFE478),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  i['id_room'] + " " + i['status'],
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: Colors.grey, fontSize: 20),
+                                decoration: BoxDecoration(
+                                  color: Color(0xffFFE478),
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                              ),
-                            ),
+                                child: Center(
+                                  child: Column(children: [
+                                    Text(
+                                      i['id_room'],
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color:
+                                              Color.fromARGB(255, 77, 77, 77),
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      i['status'],
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color:
+                                              Colors.grey,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ]),
+                                )),
                           ),
                       ],
                     ),
@@ -76,12 +90,10 @@ class _apparelState extends State<apparel> {
     );
   }
 
-
   void LoadAlldata() async {
     var response = await apiHandler.get("/user/list/rentalroom");
     setState(() {
       output = response;
     });
-
   }
 }
